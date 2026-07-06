@@ -93,7 +93,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, watch, nextTick } from "vue";
+import { ref, onMounted, onBeforeUnmount, watch, nextTick, onUnmounted } from "vue";
 import * as echarts from "echarts";
 
 const connected = ref(false); // 是否连接
@@ -106,18 +106,57 @@ const memoryUsed = ref(0);
 const memoryTotal = ref(0);
 
 let ws = null;  // WebSocket 实例
+let isDestroyed = false; // 是否主动关闭连接
 
-function connectWebSocket() {
+const connectWebSocket = () => {
   // 创建 WebSocket 连接
   ws = new WebSocket("ws://localhost:8765");
 
+  // 连接成功时触发
   ws.onopen = () => {
     console.log("WebSocket 已连接");
     connected.value = true;
   }
+
+  // 每次接收后端到消息时触发
+  ws.onmessage = (messageEvent) => {
+    // 解析后端发来的json字符串
+    const data = JSON.parse(messageEvent.data);
+    // console.log("接收到数据:", data);
+    uptime.value = data.boot_time;
+    cpuUsage.value = data.cpu_usage;
+    memoryPercent.value = data.memory_percent;
+    memoryUsed.value = data.memory_used.toFixed(1);
+    memoryTotal.value = data.memory_total.toFixed(1);
+  }
+
+  // 连接关闭时触发
+  ws.onclose = () => {
+    console.log("WebSocket 已断开");
+    connected.value = false;
+    // 尝试重新连接
+    if (!isDestroyed) {
+      console.log("尝试重新连接 WebSocket...");
+      setTimeout(connectWebSocket, 2000);
+    }
+  }
+
+  // 连接错误时触发
+  ws.onerror = (error) => {
+    console.error("WebSocket 错误:", error);
+  }
 }
 
+onMounted(() => {
+  connectWebSocket();
+});
 
+onUnmounted(() => {
+  isDestroyed = true; // 标记为主动关闭连接，避免自动重连
+  if (ws) {
+    ws.close();
+  }
+});
 </script>
 
 <style scoped>
