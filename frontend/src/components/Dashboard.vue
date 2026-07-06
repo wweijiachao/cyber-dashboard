@@ -4,16 +4,12 @@
     <div class="header">
       <div class="header-left">
         <span class="status-dot"></span>
-        <h1>⚡ 性能监控</h1>
+        <h1 class="header-title">性能监控</h1>
       </div>
       <div class="header-connection-status">
         <div class="connection-status">
           <span class="dot" :class="connected ? 'online' : 'offline'"></span>
           {{ connected ? "已连接" : "断开重连中..." }}
-        </div>
-        <div class="header-badge">
-          <span class="label">🔄 更新</span>
-          <span class="value">{{ interval }}s</span>
         </div>
       </div>
     </div>
@@ -32,21 +28,22 @@
         <div class="text-value">{{ memoryPercent }}<small>%</small></div>
       </div>
 
-      <!-- 3. 运行时间 纯文本卡片 -->
+      <!-- 3. 内存详情 纯文本卡片 -->
+      <div class="glass-card text-card">
+        <div class="text-label">内存详情</div>
+        <div class="text-value detail-font">
+          <span>{{ memoryUsed }}</span> / {{ memoryTotal
+          }}<small>GB</small>
+        </div>
+      </div>
+
+      <!-- 4. 运行时间 纯文本卡片 -->
       <div class="glass-card text-card">
         <div class="text-label">系统运行时间</div>
         <div class="text-value uptime-font">{{ uptime }}</div>
       </div>
 
-      <!-- 4. 内存详情 纯文本卡片 -->
-      <div class="glass-card text-card">
-        <div class="text-label">🧠 内存详情</div>
-        <div class="text-value detail-font">
-          <span class="highlight-used">{{ memoryUsed }}</span> / {{ memoryTotal
-          }}<small>GB</small>
-          <span class="highlight-percent">({{ memoryPercent }}%)</span>
-        </div>
-      </div>
+      
 
       <!-- 5. 历史趋势图 (保留) -->
       <div class="glass-card trend-card">
@@ -132,7 +129,7 @@ onUnmounted(() => {
   box-shadow:
     0 25px 50px -12px rgba(0, 0, 0, 0.8),
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  padding: 24px;
+  padding: 5px 24px;
   transition: all 0.25s ease;
 }
 
@@ -146,14 +143,15 @@ onUnmounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 2px;
   flex-wrap: wrap;
   gap: 16px;
+  height: 52px;
 }
 .header-left {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 5px;
 }
 .header-connection-status {
   display: flex;
@@ -215,7 +213,7 @@ onUnmounted(() => {
   font-size: 13px;
   color: #94a3b8;
   background: rgba(255, 255, 255, 0.03);
-  padding: 6px 16px;
+  padding: 0px 16px;
   border-radius: 30px;
   border: 1px solid rgba(255, 255, 255, 0.04);
 }
@@ -390,5 +388,10 @@ onUnmounted(() => {
   .trend-chart {
     height: 120px;
   } /* 压缩图表以防横屏溢出 */
+}
+
+.header-title {
+  height: 32px;
+  width: 108px;
 }
 </style>
