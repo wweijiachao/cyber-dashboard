@@ -3,6 +3,7 @@ import websockets
 import json
 from divice_status import get_boot_time, get_cpu_usage, get_memory_usage
 
+
 async def handle_connection(websocket):
     """
     处理每一个连接进来的客户端
@@ -23,7 +24,7 @@ async def handle_connection(websocket):
                 "cpu_usage": cpu_usage,
                 "memory_total": memory_info["total"],
                 "memory_used": memory_info["used"],
-                "memory_percent": memory_info["percent"]
+                "memory_percent": memory_info["percent"],
             }
             # 将数据转换为 JSON 格式
             json_data = json.dumps(payload)
@@ -48,4 +49,3 @@ async def main():
 if __name__ == "__main__":
     # 启动事件循环，运行 WebSocket 服务器
     asyncio.run(main())
-            
